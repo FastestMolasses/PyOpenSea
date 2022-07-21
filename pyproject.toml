@@ -1,0 +1,33 @@
+[project]
+name = "py-opensea-sdk"
+version = "1.0.0"
+authors = [
+  { name="Abe" },
+]
+description = "Python SDK for the Opensea API"
+readme = "README.md"
+license = { file="LICENSE" }
+requires-python = ">=3.8"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+]
+dependencies = [
+    "requests~=2.28.1",
+]
+keywords = [
+    "opensea",
+    "api",
+    "sdk",
+    "python",
+    "nft",
+    "erc721",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/FastestMolasses/PyOpenSea"
+"Bug Tracker" = "https://github.com/FastestMolasses/PyOpenSea/issues"

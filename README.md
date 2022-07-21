@@ -14,13 +14,13 @@ An unofficial Python SDK for the [OpenSea API](https://docs.opensea.io/reference
 ## Installation
 
 ```bash
-pip install py-opensea
+pip install py-opensea-sdk
 ```
 
 ### Upgrade
 
 ```bash
-pip install py-opensea -U
+pip install py-opensea-sdk -U
 ```
 
 ## Usage
