@@ -1,0 +1,8 @@
+__pycache__/
+.vscode/
+env/
+*.txt
+!requirements.txt
+*.log
+.env
+.DS_STORE
