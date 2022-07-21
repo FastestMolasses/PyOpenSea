@@ -1,6 +1,6 @@
 # Python SDK for the OpenSea API
 
-![python](https://github.com/FastestMolasses/PyOpensea/actions/workflows/main.yaml/badge.svg)
+![python](https://github.com/FastestMolasses/PyOpenSea/actions/workflows/main.yaml/badge.svg)
 
 An unofficial Python SDK for the [OpenSea API](https://docs.opensea.io/reference/api-overview).
 
@@ -15,6 +15,12 @@ An unofficial Python SDK for the [OpenSea API](https://docs.opensea.io/reference
 
 ```bash
 pip install py-opensea
+```
+
+### Upgrade
+
+```bash
+pip install py-opensea -U
 ```
 
 ## Usage
