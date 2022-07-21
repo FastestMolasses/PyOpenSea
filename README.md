@@ -1,5 +1,6 @@
 # Python SDK for the OpenSea API
 
+[![PyPI version](https://badge.fury.io/py/py-opensea-sdk.svg)](https://badge.fury.io/py/py-opensea-sdk)
 ![python](https://github.com/FastestMolasses/PyOpenSea/actions/workflows/main.yaml/badge.svg)
 
 An unofficial Python SDK for the [OpenSea API](https://docs.opensea.io/reference/api-overview).
