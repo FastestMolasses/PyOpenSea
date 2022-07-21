@@ -10,11 +10,8 @@ class Endpoints:
     def assets() -> str:
         return f'{BASE_URL}/assets'
 
-    def validateAsset(contractAddress: str, tokenID: Union[str, int]) -> str:
-        return f'{BASE_URL}/asset/{contractAddress}/{tokenID}/validate'
-
-    def events() -> str:
-        return f'{BASE_URL}/events'
+    def bundles() -> str:
+        return f'{BASE_URL}/bundles'
 
     def collection(collectionSlug: str) -> str:
         return f'{BASE_URL}/collection/{collectionSlug}'
@@ -22,20 +19,23 @@ class Endpoints:
     def collections() -> str:
         return f'{BASE_URL}/collections'
 
-    def bundles() -> str:
-        return f'{BASE_URL}/bundles'
+    def collectionStats(collectionSlug: str) -> str:
+        return f'{BASE_URL}/collection/{collectionSlug}/stats'
 
     def contract(contractAddress: str) -> str:
         return f'{BASE_URL}/asset_contract/{contractAddress}'
 
-    def collectionStats(collectionSlug: str) -> str:
-        return f'{BASE_URL}/collection/{collectionSlug}/stats'
-
-    def orders() -> str:
-        return 'https://api.opensea.io/wyvern/v1/orders'
+    def events() -> str:
+        return f'{BASE_URL}/events'
 
     def listings(contractAddress: str, tokenID: Union[str, int]) -> str:
         return f'{BASE_URL}/asset/{contractAddress}/{tokenID}/listings'
 
     def offers(contractAddress: str, tokenID: Union[str, int]) -> str:
         return f'{BASE_URL}/asset/{contractAddress}/{tokenID}/offers'
+
+    def orders() -> str:
+        return 'https://api.opensea.io/wyvern/v1/orders'
+
+    def validateAsset(contractAddress: str, tokenID: Union[str, int]) -> str:
+        return f'{BASE_URL}/asset/{contractAddress}/{tokenID}/validate'

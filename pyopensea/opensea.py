@@ -1,9 +1,9 @@
 import requests
 
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Union, List, Literal
-from pyopensea.endpoint import Endpoints
 from pyopensea.util import requireApiKey
+from pyopensea.endpoint import Endpoints
 
 MAX_ASSETS = 50
 MAX_ORDERS = 50
@@ -70,6 +70,44 @@ class OpenSeaAPI:
         return self._makeRequest(Endpoints.contract(contractAddress))
 
     @requireApiKey
+    def events(
+        self,
+        onlyOpensea: bool = False,
+        tokenIDs: Union[List[Union[str, int]], str] = None,
+        contractAddress: str = None,
+        collectionSlug: str = None,
+        collectionEditor: str = None,
+        accountAddress: str = None,
+        eventType: Literal['created', 'successful', 'cancelled', 'bid_entered',
+                           'bid_withdrawn', 'transfer', 'offer_entered', 'approve'] = None,
+        auctionType: Literal['english', 'dutch', 'min-price'] = None,
+        occurredBefore: Union[datetime, int] = None,
+        occurredAfter: Union[datetime, int] = None,
+        cursor: str = None,
+        limit: int = MAX_EVENTS,
+    ):
+        if isinstance(occurredBefore, datetime):
+            occurredBefore = int(occurredBefore.replace(tzinfo=timezone.utc).timestamp())
+        if isinstance(occurredAfter, datetime):
+            occurredAfter = int(occurredAfter.replace(tzinfo=timezone.utc).timestamp())
+
+        params = {
+            'only_opensea': 'true' if onlyOpensea else 'false',
+            'token_ids': tokenIDs,
+            'asset_contract_address': contractAddress,
+            'collection_slug': collectionSlug,
+            'collection_editor': collectionEditor,
+            'account_address': accountAddress,
+            'event_type': eventType,
+            'auction_type': auctionType,
+            'occurred_before': occurredBefore,
+            'occurred_after': occurredAfter,
+            'cursor': cursor,
+            'limit': limit,
+        }
+        return self._makeRequest(Endpoints.events(), params)
+
+    @requireApiKey
     def listings(
         self,
         contractAddress: str,
@@ -116,9 +154,9 @@ class OpenSeaAPI:
         orderDirection: Literal['desc', 'asc'] = 'desc',
     ):
         if isinstance(listedAfter, datetime):
-            listedAfter = int(listedAfter.timestamp())
+            listedAfter = int(listedAfter.replace(tzinfo=timezone.utc).timestamp())
         if isinstance(listedBefore, datetime):
-            listedBefore = int(listedBefore.timestamp())
+            listedBefore = int(listedBefore.replace(tzinfo=timezone.utc).timestamp())
 
         if side == 'buy':
             side = 0

@@ -43,8 +43,15 @@ api.offers('0x8a90cab2b38dba80c64b7734e58ee1db38b8992e', tokenID=10, limit=5)
 api.orders()
 
 from datetime import datetime
+# Note: datetime objects are automatically converted to the UTC timezone
 api.orders('0x8a90cab2b38dba80c64b7734e58ee1db38b8992e',
            listedAfter=datetime(2022, 7, 5))
+
+api.events(occurredAfter=1658423412, occurredBefore=1658425412,
+           limit=1, eventType='successful')
+# Note: datetime objects are automatically converted to the UTC timezone
+api.events(occurredAfter=datetime(2022, 7, 3), occurredBefore=datetime(2022, 7, 5),
+           limit=1, eventType='successful')
 
 # And more api endpoints supported...
 ```
