@@ -6,15 +6,41 @@ An unofficial Python SDK for the [OpenSea API](https://docs.opensea.io/reference
 
 ## Features
 
-- Typing
-- All endpoints supported
-- Optional API key
-- WebSocket support
+-   Typing
+-   All endpoints supported
+-   Optional API key
+-   WebSocket support
 
 ## Installation
 
 ```bash
 pip install py-opensea
+```
+
+## Usage
+
+```python
+from pyopensea import OpenSeaAPI
+
+# Create API instance
+api = OpenSeaAPI('OPTIONAL-API-KEY')
+
+# Examples
+api.assets(owner='0x20481b79a4F03b624D214d23aDf5bF5f33bEB4aA')
+
+api.contract('0x8a90cab2b38dba80c64b7734e58ee1db38b8992e')
+
+api.listings('0x8a90cab2b38dba80c64b7734e58ee1db38b8992e', tokenID=10)
+
+api.offers('0x8a90cab2b38dba80c64b7734e58ee1db38b8992e', tokenID=10, limit=5)
+
+api.orders()
+
+from datetime import datetime
+api.orders('0x8a90cab2b38dba80c64b7734e58ee1db38b8992e',
+           listedAfter=datetime(2022, 7, 5))
+
+# And more api endpoints supported...
 ```
 
 ## Contributing
