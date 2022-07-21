@@ -1,8 +1,17 @@
 import requests
 
-from typing import Union
+from datetime import datetime
+from typing import Union, List, Literal
 from pyopensea.endpoint import Endpoints
 from pyopensea.util import requireApiKey
+
+MAX_ASSETS = 50
+MAX_ORDERS = 50
+MAX_OFFERS = 50
+MAX_EVENTS = 300
+MAX_BUNDLES = 50
+MAX_LISTINGS = 50
+MAX_COLLECTIONS = 300
 
 
 class OpenSeaAPI:
@@ -15,41 +24,169 @@ class OpenSeaAPI:
             self.headers['X-API-KEY'] = apiKey
 
     @requireApiKey
-    def assets(self):
-        return self._makeRequest(Endpoints.assets())
+    def assets(
+        self,
+        owner: str = None,
+        tokenIDs: Union[List[Union[str, int]], str] = None,
+        collectionSlug: str = None,
+        collectionEditor: str = None,
+        orderDirection: Literal['desc', 'asc'] = 'desc',
+        contractAddress: str = None,
+        contractAddresses: List[str] = None,
+        includeOrders: bool = False,
+        limit: int = MAX_ASSETS,
+        cursor: str = None,
+    ):
+        params = {
+            'owner': owner,
+            'token_ids': tokenIDs,
+            'collection_slug': collectionSlug,
+            'collection_editor': collectionEditor,
+            'order_direction': orderDirection,
+            'asset_contract_address': contractAddress,
+            'asset_contract_addresses': contractAddresses,
+            'include_orders': 'true' if includeOrders else 'false',
+            'limit': limit,
+            'cursor': cursor,
+        }
+        return self._makeRequest(Endpoints.assets(), params)
 
     @requireApiKey
-    def asset(self, contractAddress: str, tokenID: Union[str, int]):
-        return self._makeRequest(Endpoints.asset(contractAddress, tokenID))
+    def asset(
+        self,
+        contractAddress: str,
+        tokenID: Union[str, int],
+        accountAddress: str = None,
+        includeOrders: bool = False,
+    ):
+        params = {
+            'account_address': accountAddress,
+            'include_orders': 'true' if includeOrders else 'false',
+        }
+        return self._makeRequest(Endpoints.asset(contractAddress, tokenID), params)
 
     @requireApiKey
     def contract(self, contractAddress: str):
         return self._makeRequest(Endpoints.contract(contractAddress))
 
     @requireApiKey
-    def listings(self, contractAddress: str, tokenID: Union[str, int]):
-        return self._makeRequest(Endpoints.listings(contractAddress, tokenID))
+    def listings(
+        self,
+        contractAddress: str,
+        tokenID: Union[str, int],
+        limit: int = MAX_LISTINGS,
+    ):
+        params = {
+            'limit': limit,
+        }
+        return self._makeRequest(Endpoints.listings(contractAddress, tokenID), params)
 
     @requireApiKey
-    def offers(self, contractAddress: str, tokenID: Union[str, int]):
-        return self._makeRequest(Endpoints.offers(contractAddress, tokenID))
+    def offers(
+        self,
+        contractAddress: str,
+        tokenID: Union[str, int],
+        limit: int = MAX_OFFERS,
+    ):
+        params = {
+            'limit': limit,
+        }
+        return self._makeRequest(Endpoints.offers(contractAddress, tokenID), params)
 
     @requireApiKey
-    def orders(self):
-        return self._makeRequest(Endpoints.orders())
+    def orders(
+        self,
+        contractAddress: str = None,
+        paymentTokenAddress: str = None,
+        maker: str = None,
+        taker: str = None,
+        owner: str = None,
+        isEnglish: bool = False,
+        bundled: bool = False,
+        includeBundled: bool = False,
+        listedAfter: Union[datetime, int] = None,
+        listedBefore: Union[datetime, int] = None,
+        tokenID: Union[str, int] = None,
+        tokenIDs: List[Union[str, int]] = None,
+        side: Literal['buy', 'sell', 0, 1] = 1,
+        saleKind: Literal[0, 1] = None,
+        limit: int = MAX_ORDERS,
+        offset: int = 0,
+        orderBy: Literal['created_date', 'eth_price'] = 'created_date',
+        orderDirection: Literal['desc', 'asc'] = 'desc',
+    ):
+        if isinstance(listedAfter, datetime):
+            listedAfter = int(listedAfter.timestamp())
+        if isinstance(listedBefore, datetime):
+            listedBefore = int(listedBefore.timestamp())
+
+        if side == 'buy':
+            side = 0
+        elif side == 'sell':
+            side = 1
+
+        params = {
+            'asset_contract_address': contractAddress,
+            'payment_token_address': paymentTokenAddress,
+            'maker': maker,
+            'taker': taker,
+            'owner': owner,
+            'is_english': 'true' if isEnglish else 'false',
+            'bundled': 'true' if bundled else 'false',
+            'include_bundled': 'true' if includeBundled else 'false',
+            'listed_after': listedAfter,
+            'listed_before': listedBefore,
+            'token_id': tokenID,
+            'token_ids': tokenIDs,
+            'side': side,
+            'sale_kind': saleKind,
+            'limit': limit,
+            'offset': offset,
+            'order_by': orderBy,
+            'order_direction': orderDirection,
+        }
+        return self._makeRequest(Endpoints.orders(), params)
 
     @requireApiKey
     def validateAsset(self, contractAddress: str, tokenID: Union[str, int]):
         return self._makeRequest(Endpoints.validateAsset(contractAddress, tokenID))
 
-    def bundles(self):
-        return self._makeRequest(Endpoints.bundles())
+    def bundles(
+        self,
+        onSale: bool = False,
+        owner: str = None,
+        contractAddress: str = None,
+        contractAddresses: List[str] = None,
+        tokenIDs: List[Union[str, int]] = None,
+        limit: int = MAX_BUNDLES,
+        offset: int = 0,
+    ):
+        params = {
+            'on_sale': 'true' if onSale else 'false',
+            'owner': owner,
+            'asset_contract_address': contractAddress,
+            'asset_contract_addresses': contractAddresses,
+            'token_ids': tokenIDs,
+            'limit': limit,
+            'offset': offset,
+        }
+        return self._makeRequest(Endpoints.bundles(), params)
 
     def collection(self, collectionSlug: str):
         return self._makeRequest(Endpoints.collection(collectionSlug))
 
-    def collections(self):
-        return self._makeRequest(Endpoints.collections())
+    def collections(
+        self,
+        assetOwner: str = None,
+        limit: int = MAX_COLLECTIONS,
+        offset: int = 0,
+    ):
+        params = {
+            'asset_owner': assetOwner,
+            'limit': limit,
+            'offset': offset,
+        }
+        return self._makeRequest(Endpoints.collections(), params)
 
     def collectionStats(self, collectionSlug: str):
         return self._makeRequest(Endpoints.collectionStats(collectionSlug))
@@ -61,6 +198,7 @@ class OpenSeaAPI:
         if response.status_code == 401:
             raise AttributeError('Invalid API key')
 
+        # Make sure the request was accepted
         elif response.status_code == 403:
             raise ConnectionError('Access denied')
 
