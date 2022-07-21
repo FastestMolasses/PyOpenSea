@@ -6,3 +6,4 @@ env/
 *.log
 .env
 .DS_STORE
+test.py
