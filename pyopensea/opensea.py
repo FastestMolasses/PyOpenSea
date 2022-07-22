@@ -1,9 +1,10 @@
+import time
 import requests
 
 from datetime import datetime, timezone
-from typing import Union, List, Literal
 from pyopensea.util import requireApiKey
 from pyopensea.endpoint import Endpoints
+from typing import Union, List, Literal, Generator
 
 MAX_ASSETS = 50
 MAX_ORDERS = 50
@@ -106,6 +107,66 @@ class OpenSeaAPI:
             'limit': limit,
         }
         return self._makeRequest(Endpoints.events(), params)
+
+    @requireApiKey
+    def eventsBackfill(
+        self,
+        onlyOpensea: bool = False,
+        tokenIDs: Union[List[Union[str, int]], str] = None,
+        contractAddress: str = None,
+        collectionSlug: str = None,
+        collectionEditor: str = None,
+        accountAddress: str = None,
+        eventType: Literal['created', 'successful', 'cancelled', 'bid_entered',
+                           'bid_withdrawn', 'transfer', 'offer_entered', 'approve'] = None,
+        auctionType: Literal['english', 'dutch', 'min-price'] = None,
+        occurredBefore: Union[datetime, int] = None,
+        occurredAfter: Union[datetime, int] = None,
+        rateLimit: int = 2,
+    ) -> Generator[dict, None, None]:
+        """
+            Backfill events from the OpenSea API. Starts at the specified recent event and
+            continues until the specified time. Returns a generator that will
+            yield the events in reverse chronological order.
+        """
+        cursor = None
+        while True:
+            time.sleep(rateLimit)
+            result = self.events(
+                onlyOpensea=onlyOpensea,
+                tokenIDs=tokenIDs,
+                contractAddress=contractAddress,
+                collectionSlug=collectionSlug,
+                collectionEditor=collectionEditor,
+                accountAddress=accountAddress,
+                eventType=eventType,
+                auctionType=auctionType,
+                occurredBefore=occurredBefore,
+                occurredAfter=occurredAfter,
+                cursor=cursor,
+            )
+            # Check if we have no results
+            if result is None or len(result['asset_events']) == 0:
+                break
+
+            cursor = result['next']
+            yield result['asset_events']
+
+            # If there are no more results, end the loop
+            if not result['next']:
+                break
+
+            # If occurredAfter is an int, convert it to a datetime object
+            if isinstance(occurredAfter, int):
+                occurredAfter = datetime.fromtimestamp(occurredAfter).replace(tzinfo=timezone.utc)
+
+            # Get the last received date of event
+            lastDate = datetime.strptime(
+                result['asset_events'][-1]['created_date'],
+                '%Y-%m-%dT%H:%M:%S.%f').replace(tzinfo=timezone.utc)
+            # Check if we've reached the end of the time range
+            if lastDate < occurredAfter:
+                break
 
     @requireApiKey
     def listings(
@@ -232,12 +293,19 @@ class OpenSeaAPI:
     def _makeRequest(self, url: str, params: dict = None):
         response = requests.get(url, headers=self.headers, params=params)
 
-        # Make sure the API key is valid
-        if response.status_code == 401:
+        if response.status_code == 400:
+            raise ValueError(response.text)
+
+        elif response.status_code == 401:
             raise AttributeError('Invalid API key')
 
-        # Make sure the request was accepted
         elif response.status_code == 403:
             raise ConnectionError('Access denied')
+
+        elif response.status_code == 429:
+            raise ConnectionError('Rate limit exceeded')
+
+        elif response.status_code == 500:
+            raise ConnectionError('Internal server error')
 
         return response.json()
