@@ -123,7 +123,7 @@ class OpenSeaAPI:
         occurredBefore: Union[datetime, int] = None,
         occurredAfter: Union[datetime, int] = None,
         rateLimit: int = 2,
-    ) -> Generator[dict, None, None]:
+    ) -> Generator[List[dict], None, None]:
         """
             Backfill events from the OpenSea API. Starts at the specified recent event and
             continues until the specified time. Returns a generator that will
@@ -297,7 +297,7 @@ class OpenSeaAPI:
             raise ValueError(response.text)
 
         elif response.status_code == 401:
-            raise AttributeError('Invalid API key')
+            raise ValueError('Invalid API key')
 
         elif response.status_code == 403:
             raise ConnectionError('Access denied')
