@@ -37,5 +37,8 @@ class Endpoints:
     def orders() -> str:
         return 'https://api.opensea.io/wyvern/v1/orders'
 
+    def owners(contractAddress: str, tokenID: Union[str, int]) -> str:
+        return f'{BASE_URL}/asset/{contractAddress}/{tokenID}/owners'
+
     def validateAsset(contractAddress: str, tokenID: Union[str, int]) -> str:
         return f'{BASE_URL}/asset/{contractAddress}/{tokenID}/validate'

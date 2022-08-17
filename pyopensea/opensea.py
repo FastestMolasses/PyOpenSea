@@ -9,6 +9,7 @@ from typing import Union, List, Literal, Generator
 MAX_ASSETS = 50
 MAX_ORDERS = 50
 MAX_OFFERS = 50
+MAX_OWNERS = 50
 MAX_EVENTS = 300
 MAX_BUNDLES = 50
 MAX_LISTINGS = 50
@@ -289,6 +290,21 @@ class OpenSeaAPI:
 
     def collectionStats(self, collectionSlug: str):
         return self._makeRequest(Endpoints.collectionStats(collectionSlug))
+
+    def owners(self,
+               contractAddress: str,
+               tokenID: Union[str, int],
+               limit: int = MAX_OWNERS,
+               orderBy: Literal['created_date'] = 'created_date',
+               orderDirection: Literal['desc', 'asc'] = 'desc',
+               cursor: str = None):
+        params = {
+            'limit': limit,
+            'order_by': orderBy,
+            'order_direction': orderDirection,
+            'cursor': cursor,
+        }
+        return self._makeRequest(Endpoints.owners(contractAddress, tokenID), params)
 
     def _makeRequest(self, url: str, params: dict = None):
         response = requests.get(url, headers=self.headers, params=params)
