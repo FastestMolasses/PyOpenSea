@@ -158,7 +158,7 @@ class OpenSeaAPI:
                 break
 
             # If occurredAfter is an int, convert it to a datetime object
-            if isinstance(occurredAfter, int):
+            if isinstance(occurredAfter, int) or isinstance(occurredAfter, float):
                 occurredAfter = datetime.fromtimestamp(occurredAfter).replace(tzinfo=timezone.utc)
 
             # Get the last received date of event
