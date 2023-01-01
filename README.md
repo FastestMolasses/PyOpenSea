@@ -14,6 +14,8 @@ An unofficial Python SDK for the [OpenSea API](https://docs.opensea.io/reference
 
 ## Installation
 
+Requirements: Python 3.9+
+
 ```bash
 pip install py-opensea-sdk
 ```

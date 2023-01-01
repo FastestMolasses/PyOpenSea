@@ -1,10 +1,10 @@
 import time
 import requests
 
+from typing import Literal, Generator
 from datetime import datetime, timezone
 from pyopensea.util import requireApiKey
 from pyopensea.endpoint import Endpoints
-from typing import Union, List, Literal, Generator
 
 MAX_ASSETS = 50
 MAX_ORDERS = 50
@@ -29,12 +29,12 @@ class OpenSeaAPI:
     def assets(
         self,
         owner: str = None,
-        tokenIDs: Union[List[Union[str, int]], str] = None,
+        tokenIDs: list[str | int] | str = None,
         collectionSlug: str = None,
         collectionEditor: str = None,
         orderDirection: Literal['desc', 'asc'] = 'desc',
         contractAddress: str = None,
-        contractAddresses: List[str] = None,
+        contractAddresses: list[str] = None,
         includeOrders: bool = False,
         limit: int = MAX_ASSETS,
         cursor: str = None,
@@ -57,7 +57,7 @@ class OpenSeaAPI:
     def asset(
         self,
         contractAddress: str,
-        tokenID: Union[str, int],
+        tokenID: str | int,
         accountAddress: str = None,
         includeOrders: bool = False,
     ):
@@ -75,7 +75,7 @@ class OpenSeaAPI:
     def events(
         self,
         onlyOpensea: bool = False,
-        tokenIDs: Union[List[Union[str, int]], str] = None,
+        tokenIDs: list[str | int] | str = None,
         contractAddress: str = None,
         collectionSlug: str = None,
         collectionEditor: str = None,
@@ -83,8 +83,8 @@ class OpenSeaAPI:
         eventType: Literal['created', 'successful', 'cancelled', 'bid_entered',
                            'bid_withdrawn', 'transfer', 'offer_entered', 'approve'] = None,
         auctionType: Literal['english', 'dutch', 'min-price'] = None,
-        occurredBefore: Union[datetime, int] = None,
-        occurredAfter: Union[datetime, int] = None,
+        occurredBefore: datetime | int = None,
+        occurredAfter: datetime | int = None,
         cursor: str = None,
         limit: int = MAX_EVENTS,
     ):
@@ -113,7 +113,7 @@ class OpenSeaAPI:
     def eventsBackfill(
         self,
         onlyOpensea: bool = False,
-        tokenIDs: Union[List[Union[str, int]], str] = None,
+        tokenIDs: list[str | int] | str = None,
         contractAddress: str = None,
         collectionSlug: str = None,
         collectionEditor: str = None,
@@ -121,10 +121,10 @@ class OpenSeaAPI:
         eventType: Literal['created', 'successful', 'cancelled', 'bid_entered',
                            'bid_withdrawn', 'transfer', 'offer_entered', 'approve'] = None,
         auctionType: Literal['english', 'dutch', 'min-price'] = None,
-        occurredBefore: Union[datetime, int] = None,
-        occurredAfter: Union[datetime, int] = None,
+        occurredBefore: datetime | int = None,
+        occurredAfter: datetime | int = None,
         rateLimit: int = 2,
-    ) -> Generator[List[dict], None, None]:
+    ) -> Generator[list[dict], None, None]:
         """
             Backfill events from the OpenSea API. Starts at the specified recent event and
             continues until the specified time. Returns a generator that will
@@ -173,7 +173,7 @@ class OpenSeaAPI:
     def listings(
         self,
         contractAddress: str,
-        tokenID: Union[str, int],
+        tokenID: str | int,
         limit: int = MAX_LISTINGS,
     ):
         params = {
@@ -185,7 +185,7 @@ class OpenSeaAPI:
     def offers(
         self,
         contractAddress: str,
-        tokenID: Union[str, int],
+        tokenID: str | int,
         limit: int = MAX_OFFERS,
     ):
         params = {
@@ -204,10 +204,10 @@ class OpenSeaAPI:
         isEnglish: bool = False,
         bundled: bool = False,
         includeBundled: bool = False,
-        listedAfter: Union[datetime, int] = None,
-        listedBefore: Union[datetime, int] = None,
-        tokenID: Union[str, int] = None,
-        tokenIDs: List[Union[str, int]] = None,
+        listedAfter: datetime | int = None,
+        listedBefore: datetime | int = None,
+        tokenID: str | int = None,
+        tokenIDs: list[str | int] = None,
         side: Literal['buy', 'sell', 0, 1] = 1,
         saleKind: Literal[0, 1] = None,
         limit: int = MAX_ORDERS,
@@ -248,21 +248,23 @@ class OpenSeaAPI:
         return self._makeRequest(Endpoints.orders(), params)
 
     @requireApiKey
-    def validateAsset(self, contractAddress: str, tokenID: Union[str, int]):
+    def validateAsset(self, contractAddress: str, tokenID: str | int):
         return self._makeRequest(Endpoints.validateAsset(contractAddress, tokenID))
 
     def bundles(
         self,
-        onSale: bool = False,
-        owner: str = None,
+        onSale: bool | None = None,
+        owner: str | None = None,
         contractAddress: str = None,
-        contractAddresses: List[str] = None,
-        tokenIDs: List[Union[str, int]] = None,
+        contractAddresses: list[str] = None,
+        tokenIDs: list[str | int] = None,
         limit: int = MAX_BUNDLES,
         offset: int = 0,
     ):
+        if onSale is not None:
+            onSale = 'true' if onSale else 'false'
         params = {
-            'on_sale': 'true' if onSale else 'false',
+            'on_sale': onSale,
             'owner': owner,
             'asset_contract_address': contractAddress,
             'asset_contract_addresses': contractAddresses,
@@ -293,7 +295,7 @@ class OpenSeaAPI:
 
     def owners(self,
                contractAddress: str,
-               tokenID: Union[str, int],
+               tokenID: str | int,
                limit: int = MAX_OWNERS,
                orderBy: Literal['created_date'] = 'created_date',
                orderDirection: Literal['desc', 'asc'] = 'desc',

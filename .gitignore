@@ -10,3 +10,4 @@ test.py
 dist/
 *.egg-info/
 pypitoken
+.pytest_cache
