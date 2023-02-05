@@ -4,6 +4,7 @@ env/
 *.txt
 !requirements.txt
 *.log
+.venv
 .env
 .DS_STORE
 test.py
@@ -11,3 +12,4 @@ dist/
 *.egg-info/
 pypitoken
 .pytest_cache
+.ruff_cache

@@ -31,3 +31,12 @@ keywords = [
 [project.urls]
 "Homepage" = "https://github.com/FastestMolasses/PyOpenSea"
 "Bug Tracker" = "https://github.com/FastestMolasses/PyOpenSea/issues"
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+extend-exclude = [".pytest_cache"]
+ignore-init-module-imports = true
+
+[tool.ruff.mccabe]
+max-complexity = 10
