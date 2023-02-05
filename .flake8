@@ -1,7 +1,0 @@
-[flake8]
-max-line-length = 100
-ignore = E402,
-exclude = .git,__pycache__,env,.github,test.py
-indent-size = 4
-statistics = True
-max-complexity = 10
